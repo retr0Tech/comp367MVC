@@ -7,7 +7,7 @@ trigger:
     - development
 
 pool:
-  name: MySelfHostedAgentPool
+  name: self-host-lab4
 
 steps:
 - script: dotnet build --configuration Release
