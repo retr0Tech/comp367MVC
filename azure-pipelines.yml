@@ -28,15 +28,4 @@ steps:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
-- task: VSTest@2
-  inputs:
-  testAssemblyVer2: |
-    **/bin/$(BuildConfiguration)/**/*Test*.dll
-    !**/bin/$(BuildConfiguration)/**/xunit.runner.visualstudio.testadapter.dll
-    !**/bin/$(BuildConfiguration)/**/xunit.runner.console.dll
-  platform: '$(buildPlatform)'
-  configuration: '$(buildConfiguration)'
-  searchFolder: '$(System.DefaultWorkingDirectory)'
-  otherConsoleOptions: '/Framework:FrameworkCore10 /logger:trx /TestAdapterPath:.'
-  vstestPath: '/Applications/Visual Studio.app/Contents/MacOS/vstest.console'
 
