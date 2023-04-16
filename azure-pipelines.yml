@@ -24,11 +24,19 @@ steps:
 - task: VSBuild@1
   inputs:
     solution: '$(solution)'
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
+    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)/WebApp.zip" /p:DeployIisAppPath="Default Web Site" /p:VisualStudioVersion=15.0 /p:MSBuildExtensionsPath=/Library/Frameworks/Mono.framework/Versions/Current/lib/mono/msbuild/15.0/bin/'
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
 - task: VSTest@2
   inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+  testAssemblyVer2: |
+    **/bin/$(BuildConfiguration)/**/*Test*.dll
+    !**/bin/$(BuildConfiguration)/**/xunit.runner.visualstudio.testadapter.dll
+    !**/bin/$(BuildConfiguration)/**/xunit.runner.console.dll
+  platform: '$(buildPlatform)'
+  configuration: '$(buildConfiguration)'
+  searchFolder: '$(System.DefaultWorkingDirectory)'
+  otherConsoleOptions: '/Framework:FrameworkCore10 /logger:trx /TestAdapterPath:.'
+  vstestPath: '/Applications/Visual Studio.app/Contents/MacOS/vstest.console'
+
