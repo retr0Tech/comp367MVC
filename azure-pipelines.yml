@@ -13,19 +13,34 @@ variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
+  outputPath: '$(Build.ArtifactStagingDirectory)/$(buildConfiguration)'
 
 steps:
-- task: NuGetToolInstaller@1
-
-- task: NuGetCommand@2
+- task: UseDotNet@2
   inputs:
-    restoreSolution: '$(solution)'
+    packageType: 'sdk'
 
-- task: VSBuild@1
+- task: DotNetCoreCLI@2
   inputs:
-    solution: '$(solution)'
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)/WebApp.zip" /p:DeployIisAppPath="Default Web Site" /p:VisualStudioVersion=15.0 /p:MSBuildExtensionsPath=/Library/Frameworks/Mono.framework/Versions/Current/lib/mono/msbuild/15.0/bin/'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+    command: 'restore'
+    projects: '$(solution)'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'build'
+    projects: '$(solution)'
+    arguments: '-c $(buildConfiguration)'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    projects: '$(solution)'
+    arguments: '--configuration $(buildConfiguration) --output $(outputPath) --no-restore'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathtoPublish: '$(outputPath)'
+    artifactName: 'drop'
+
 
 
